@@ -1,6 +1,6 @@
-import { Button, Text, View } from "react-native";
+import { Alert, Button, Text, View } from "react-native";
 import {Card, Input, NumberContainer} from "../../components";
-import React, {useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 
 import colors from "../../constants/colors";
 import { styles } from "./style";
@@ -16,8 +16,37 @@ const generateRandomNumber=(min, max, exclude)=>{
     }
 }
 
-const Game = ({selectedNumber}) =>{
+const Game = ({selectedNumber, onGameOver}) =>{
     const [currentGuess, setCurrentGuess] = useState(generateRandomNumber(1, 100, selectedNumber))
+    const [round, setRound] = useState(0);
+
+    const currentLow= useRef(1);
+    const currentHigh = useRef(100);
+
+    const onHandleNextGuess = (direction) =>{
+        if(
+            (direction == "min" && currentGuess<selectedNumber )||
+            (direction == "max" && currentGuess>selectedNumber) 
+        ){
+            Alert.alert("Estas equivocado y lo sabes!");
+            return;
+        }
+        if(direction == "min"){
+            currentHigh.current = currentGuess;
+        }else{
+            currentLow.current = currentGuess;
+        }
+        const nexNumber = generateRandomNumber(currentLow.current, currentHigh.current, currentGuess);
+        setCurrentGuess(nexNumber);
+        setRound(currentRound => currentRound + 1);
+    }
+
+    useEffect(() => {
+        if (currentGuess == selectedNumber){
+            onGameOver(round);
+        }
+    }, [currentGuess, selectedNumber, onGameOver]);
+
     return(
         <View style={styles.container}>
             <Card style={styles.content}>
@@ -26,12 +55,12 @@ const Game = ({selectedNumber}) =>{
                 <View style={styles.containerButton}>
                     <Button
                         title="Menor"
-                        onPress={()=>null}
+                        onPress={()=>onHandleNextGuess("min")}
                         color= {colors.elements}
                     />
                     <Button
                         title="Mayor"
-                        onPress={()=>null}
+                        onPress={()=>onHandleNextGuess("max")}
                         color= {colors.elements}
                     />
                 </View>

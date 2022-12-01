@@ -1,6 +1,9 @@
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
+    containerScroll:{
+        flex: 1,
+    },
     container: {
         justifyContent: "center",
         alignItems: "center",
@@ -12,7 +15,7 @@ export const styles = StyleSheet.create({
         paddingVertical: 5,
     },
     inputContainer:{
-        width: "70%",
+        width: "80%",
         justifyContent: "center",
         alignItems: "center",
         marginHorizontal: 18,
